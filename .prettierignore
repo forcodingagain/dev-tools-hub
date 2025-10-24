@@ -1,0 +1,14 @@
+node_modules
+build
+dist
+*.log
+.env
+.env.local
+.env.production
+*.config.js
+*.config.ts
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+coverage
+.nyc_output
