@@ -8,9 +8,12 @@ import {
 import type { LinksFunction } from "@remix-run/node"
 
 import stylesheet from "./styles/globals.css?url"
+import { Header } from "./components/layout/Header"
+import { NavigationProvider } from "./contexts/NavigationContext"
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
+  { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -23,7 +26,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="h-full bg-background text-foreground">
-        {children}
+        <NavigationProvider>
+          <Header />
+          <main>
+            {children}
+          </main>
+        </NavigationProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

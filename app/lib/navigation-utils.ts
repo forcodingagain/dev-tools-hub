@@ -1,15 +1,22 @@
 import { useNavigate, useLocation } from "@remix-run/react"
+import { updateStoredActiveTool } from "./storage-utils"
 
 export function useToolNavigation() {
   const navigate = useNavigate()
 
   const navigateToTool = (toolPath: string) => {
+    // 更新本地存储
+    updateStoredActiveTool(toolPath)
+
     navigate(toolPath, {
       replace: false, // 不替换历史记录，保持浏览器导航功能
     })
   }
 
   const navigateToHome = () => {
+    // 清除活动工具状态
+    updateStoredActiveTool(null)
+
     navigate("/", {
       replace: false,
     })

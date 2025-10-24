@@ -1,13 +1,50 @@
-import React, { createContext, useContext, useReducer, useRef } from 'react'
+import React, { createContext, useContext, useReducer, useRef, useEffect } from 'react'
+import { useLocation } from '@remix-run/react'
 import type { NavigationContext, NavigationAction } from '../types/navigation'
 import { initialNavigationState, navigationReducer } from '../lib/navigation-reducer'
+import { getStoredNavigationState, storeNavigationState } from '../lib/storage-utils'
 
 const NavigationContext = createContext<NavigationContext | undefined>(undefined)
 
 export function NavigationProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(navigationReducer, initialNavigationState)
+  const location = useLocation()
+
+  // 从本地存储初始化状态
+  const getInitialState = () => {
+    const storedState = getStoredNavigationState()
+    const storedTool = storedState?.activeTool
+
+    return {
+      ...initialNavigationState,
+      activeTool: storedTool || null,
+    }
+  }
+
+  const [state, dispatch] = useReducer(navigationReducer, getInitialState())
   const dropdownRef = useRef<HTMLDivElement>(null)
   const menuItemRef = useRef<HTMLButtonElement>(null)
+
+  // 监听路由变化，更新activeTool
+  useEffect(() => {
+    const path = location.pathname
+
+    // 更新activeTool状态
+    if (path.startsWith('/json') || path.startsWith('/mermaid') || path.startsWith('/markdown')) {
+      const toolName = path.split('/')[1]
+      if (toolName !== state.activeTool) {
+        dispatch({ type: 'SET_ACTIVE_TOOL', payload: toolName })
+      }
+    } else if (path === '/' && state.activeTool !== null) {
+      dispatch({ type: 'SET_ACTIVE_TOOL', payload: null })
+    }
+  }, [location.pathname])
+
+  // 持久化状态到本地存储
+  useEffect(() => {
+    if (state.activeTool !== undefined) {
+      storeNavigationState({ activeTool: state.activeTool })
+    }
+  }, [state.activeTool])
 
   const context: NavigationContext = {
     state,

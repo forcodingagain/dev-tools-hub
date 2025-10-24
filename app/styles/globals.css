@@ -84,3 +84,26 @@ body {
     @apply block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 first:rounded-t-lg last:rounded-b-lg;
   }
 }
+
+/* 移除移动端点击高亮 */
+.no-tap-highlight {
+  -webkit-tap-highlight-color: transparent;
+  -moz-tap-highlight-color: transparent;
+  -o-tap-highlight-color: transparent;
+  -ms-tap-highlight-color: transparent;
+}
+
+/* 全局移除所有按钮和链接的点击高亮 */
+button,
+button:focus,
+button:active,
+[role="button"],
+[role="menuitem"],
+a,
+a:focus,
+a:active {
+  -webkit-tap-highlight-color: transparent !important;
+  -moz-tap-highlight-color: transparent !important;
+  -o-tap-highlight-color: transparent !important;
+  -ms-tap-highlight-color: transparent !important;
+}
