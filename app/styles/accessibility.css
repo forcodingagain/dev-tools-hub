@@ -1,0 +1,758 @@
+/* 可访问性样式 */
+
+/* 屏幕阅读器专用类 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* 焦点样式 */
+.focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .focus-visible {
+    outline: 3px solid #000000;
+    background-color: #ffffff;
+  }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 跳过链接样式 */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #3b82f6;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 1000;
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* 键盘导航指示器 */
+.keyboard-navigation .focusable {
+  position: relative;
+}
+
+.keyboard-navigation .focusable::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid #3b82f6;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.keyboard-navigation .focusable:focus::after {
+  opacity: 1;
+}
+
+/* ARIA标签增强 */
+[aria-hidden="true"] {
+  display: none;
+}
+
+[aria-live="polite"],
+[aria-live="assertive"] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+[role="button"] {
+  cursor: pointer;
+}
+
+[role="button"]:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 错误状态增强 */
+[aria-invalid="true"] {
+  border-color: #ef4444;
+}
+
+[aria-invalid="true"]:focus {
+  outline-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* 加载状态增强 */
+[aria-busy="true"] {
+  cursor: wait;
+}
+
+[aria-busy="true"] * {
+  pointer-events: none;
+}
+
+/* 禁用状态增强 */
+[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 展开状态增强 */
+[aria-expanded="true"] .expand-icon {
+  transform: rotate(180deg);
+}
+
+[aria-expanded="false"] .expand-icon {
+  transform: rotate(0deg);
+}
+
+/* 选择状态增强 */
+[aria-selected="true"] {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* 当前页面指示器 */
+[aria-current="page"] {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* 表单标签增强 */
+[aria-required="true"]::after {
+  content: ' *';
+  color: #ef4444;
+}
+
+/* 工具提示增强 */
+[role="tooltip"] {
+  position: absolute;
+  background-color: #1f2937;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* 警告和通知 */
+[role="alert"] {
+  padding: 12px;
+  border-left: 4px solid #f59e0b;
+  background-color: #fef3c7;
+  margin: 8px 0;
+}
+
+[role="alert"][aria-live="assertive"] {
+  border-left-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+/* 状态指示器 */
+[role="status"] {
+  padding: 8px;
+  border-radius: 4px;
+  background-color: #f3f4f6;
+  margin: 4px 0;
+}
+
+/* 导航区域 */
+[role="navigation"] {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+[role="navigation"] ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+[role="navigation"] li {
+  display: inline-block;
+  margin-right: 16px;
+}
+
+/* 主要内容区域 */
+[role="main"] {
+  min-height: 200px;
+}
+
+/* 搜索区域 */
+[role="search"] {
+  margin: 16px 0;
+}
+
+[role="search"] input[type="search"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+[role="search"] input[type="search"]:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-color: #3b82f6;
+}
+
+/* 表单区域 */
+[role="form"] fieldset {
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+[role="form"] legend {
+  padding: 0 8px;
+  font-weight: bold;
+}
+
+/* 表格增强 */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  background-color: #f9fafb;
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid #d1d5db;
+}
+
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* 图表可访问性 */
+svg[role="img"] {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 进度条增强 */
+[role="progressbar"] {
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+[role="progressbar"] .progress-bar {
+  height: 100%;
+  background-color: #3b82f6;
+  transition: width 0.3s ease;
+}
+
+/* 滑块增强 */
+input[type="range"] {
+  width: 100%;
+  margin: 8px 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #3b82f6;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #3b82f6;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+/* 开关组件 */
+[role="switch"] {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  background-color: #d1d5db;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+[role="switch"][aria-checked="true"] {
+  background-color: #3b82f6;
+}
+
+[role="switch"]::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+[role="switch"][aria-checked="true"]::before {
+  transform: translateX(24px);
+}
+
+/* 标签页增强 */
+[role="tablist"] {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+[role="tab"] {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+[role="tab"]:hover {
+  border-bottom-color: #d1d5db;
+}
+
+[role="tab"][aria-selected="true"] {
+  border-bottom-color: #3b82f6;
+  color: #3b82f6;
+}
+
+[role="tabpanel"] {
+  padding: 16px 0;
+}
+
+/* 对话框增强 */
+[role="dialog"] {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: white;
+  padding: 24px;
+  max-width: 500px;
+  margin: 16px auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+[role="dialog"][aria-modal="true"] {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+/* 警告对话框 */
+[role="alertdialog"] {
+  border-left: 4px solid #ef4444;
+  background-color: #fef2f2;
+}
+
+/* 列表增强 */
+[role="list"] {
+  padding-left: 20px;
+}
+
+[role="listitem"] {
+  margin: 4px 0;
+}
+
+/* 定义列表 */
+[role="definition"] dt {
+  font-weight: bold;
+}
+
+[role="definition"] dd {
+  margin-left: 20px;
+  margin-bottom: 8px;
+}
+
+/* 分隔线 */
+[role="separator"] {
+  border: none;
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 16px 0;
+}
+
+/* 时间指示器 */
+[role="timer"] {
+  font-family: monospace;
+  color: #6b7280;
+}
+
+/* 滚动区域 */
+[role="marquee"] {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 应用程序区域 */
+[role="application"] {
+  outline: none;
+}
+
+/* 标题层次增强 */
+h1, h2, h3, h4, h5, h6 {
+  margin: 16px 0 8px 0;
+  line-height: 1.3;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1.125rem; }
+h5 { font-size: 1rem; }
+h6 { font-size: 0.875rem; }
+
+/* 链接增强 */
+a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+a:visited {
+  color: #7c3aed;
+}
+
+/* 图片增强 */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+img[alt=""] {
+  border: 2px dashed #ef4444;
+}
+
+/* 按钮增强 */
+button {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background-color: #f9fafb;
+}
+
+button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-color: #3b82f6;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 在线工具按钮特定样式 - 移除hover效果 */
+.no-underline {
+  text-decoration: none !important;
+}
+
+/* 强制移除所有可能的下划线 */
+.tools-menu-button,
+.tools-menu-button:hover,
+.tools-menu-button:focus,
+button.tools-menu-button {
+  text-decoration: none !important;
+  color: #374151 !important; /* 保持text-gray-700颜色 */
+}
+
+/* 额外的覆盖规则 */
+nav button.tools-menu-button:hover {
+  text-decoration: none !important;
+  color: #374151 !important;
+}
+
+/* 覆盖可能的链接样式 */
+header button.tools-menu-button {
+  text-decoration: none !important;
+}
+
+header button.tools-menu-button:hover {
+  text-decoration: none !important;
+  color: #374151 !important;
+}
+
+/* Logo链接特定样式 - 使用更高优先级 */
+a.logo-link,
+header a.logo-link,
+a.logo-link:hover,
+header a.logo-link:hover,
+a.logo-link:focus,
+header a.logo-link:focus {
+  text-decoration: none !important;
+  color: #374151 !important; /* 保持text-gray-700颜色 */
+}
+
+/* 强制覆盖所有链接的hover效果 - 使用更高优先级 */
+header .logo-link:hover,
+body header .logo-link:hover {
+  text-decoration: none !important;
+  color: #374151 !important;
+}
+
+/* 覆盖全局链接样式 - 使用更高优先级 */
+body a.logo-link:hover,
+html body a.logo-link:hover {
+  text-decoration: none !important;
+  color: #374151 !important;
+}
+
+/* 最终兜底规则 - 确保样式生效 */
+.logo-link:not(:hover):not(:focus) {
+  color: #374151 !important;
+  text-decoration: none !important;
+}
+
+/* 防止任何可能的继承样式干扰 */
+header nav a.logo-link,
+header .container a.logo-link,
+header .flex a.logo-link {
+  text-decoration: none !important;
+  color: #374151 !important;
+}
+
+header nav a.logo-link:hover,
+header .container a.logo-link:hover,
+header .flex a.logo-link:hover {
+  text-decoration: none !important;
+  color: #374151 !important;
+}
+
+/* 工具卡片链接样式 - 移除下划线 */
+.tool-card,
+.tool-card:hover,
+.tool-card:focus {
+  text-decoration: none !important;
+}
+
+/* 工具卡片内的所有文字元素都不应该有下划线 */
+.tool-card h3,
+.tool-card p,
+.tool-card h3:hover,
+.tool-card p:hover,
+.tool-card * {
+  text-decoration: none !important;
+}
+
+/* 确保工具卡片的hover状态不影响文字样式 */
+a.tool-card:hover h3,
+a.tool-card:hover p,
+a.tool-card:hover * {
+  text-decoration: none !important;
+}
+
+/* 覆盖全局链接样式对于工具卡片的影响 */
+body a.tool-card:hover,
+main a.tool-card:hover,
+.grid a.tool-card:hover {
+  text-decoration: none !important;
+}
+
+/* 防止工具卡片内任何元素出现下划线 */
+.tool-card *:hover,
+.tool-card *:focus {
+  text-decoration: none !important;
+}
+
+/* 下拉菜单项移除下划线 */
+header .no-underline,
+header .no-underline:hover,
+header .no-underline:focus,
+header a.no-underline,
+header a.no-underline:hover,
+header a.no-underline:focus {
+  text-decoration: none !important;
+}
+
+/* 下拉菜单内的所有链接都不应该有下划线 */
+header [role="menu"] a,
+header [role="menu"] a:hover,
+header [role="menu"] a:focus,
+header [role="menuitem"],
+header [role="menuitem"]:hover,
+header [role="menuitem"]:focus {
+  text-decoration: none !important;
+}
+
+/* 在线工具按钮移除阴影 */
+.tools-menu-button,
+.tools-menu-button:hover,
+.tools-menu-button:focus,
+header .tools-menu-button,
+header .tools-menu-button:hover,
+header .tools-menu-button:focus {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* 确保按钮在任何状态下都没有阴影 */
+nav button.tools-menu-button,
+nav button.tools-menu-button:hover,
+nav button.tools-menu-button:focus,
+nav button.tools-menu-button:active {
+  box-shadow: none !important;
+}
+
+/* 优化在线工具按钮的hover效果 */
+.tools-menu-button:hover {
+  background-color: #eff6ff !important; /* 更柔和的蓝色背景 */
+  color: #2563eb !important; /* 蓝色文字 */
+}
+
+/* 确保hover状态平滑过渡 */
+.tools-menu-button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 移除任何可能的默认hover效果 */
+header nav button:hover,
+header .tools-menu-button:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* JSON 工具页面特定样式 - 移除输入框和下拉框高亮 */
+input[type="text"],
+input[type="checkbox"],
+textarea,
+select,
+#json-input,
+#json-output,
+#indent-select {
+  outline: none !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: none !important;
+}
+
+input[type="text"]:focus,
+input[type="checkbox"]:focus,
+textarea:focus,
+select:focus,
+#json-input:focus,
+#json-output:focus,
+#indent-select:focus {
+  outline: none !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: none !important;
+}
+
+/* 确保复选框也没有 focus 高亮 */
+input[type="checkbox"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 移除卡片点击时的边框高亮效果 */
+.tool-card,
+a.tool-card,
+.tool-card:hover,
+a.tool-card:hover,
+.tool-card:focus,
+a.tool-card:focus,
+.tool-card:active,
+a.tool-card:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 确保卡片在所有状态下都没有边框 */
+.tool-card *,
+a.tool-card * {
+  outline: none !important;
+}
+
+/* 覆盖任何可能的 focus 状态 */
+.tool-card:focus-visible,
+a.tool-card:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 移除所有链接和按钮的默认 focus 样式 */
+a:focus,
+button:focus,
+.tool-card:focus,
+a.tool-card:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 键盘导航列表项自定义样式 */
+.list-item-custom {
+  list-style-position: inside;
+  padding-left: 0.5rem;
+  margin-left: 0;
+  line-height: 1.6;
+}
+
+.list-item-custom::marker {
+  color: #6b7280;
+  font-size: 0.875rem;
+}

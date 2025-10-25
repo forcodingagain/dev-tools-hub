@@ -1,3 +1,4 @@
+import React from "react"
 import {
   Links,
   Meta,
@@ -9,7 +10,6 @@ import type { LinksFunction } from "@remix-run/node"
 
 import stylesheet from "./styles/globals.css?url"
 import { Header } from "./components/layout/Header"
-import { NavigationProvider } from "./contexts/NavigationContext"
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -25,13 +25,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="h-full bg-background text-foreground">
-        <NavigationProvider>
-          <Header />
-          <main>
-            {children}
-          </main>
-        </NavigationProvider>
+      <body className="h-full">
+        <Header />
+        <main>
+          {children}
+        </main>
         <ScrollRestoration />
         <Scripts />
       </body>

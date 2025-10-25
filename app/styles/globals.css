@@ -1,6 +1,15 @@
+/* 导入样式文件 - 必须放在最前面 */
+@import './accessibility.css';
+@import './loading.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 全局样式 */
+* {
+  border-color: hsl(var(--border));
+}
 
 :root {
   --background: 0 0% 100%;
@@ -55,6 +64,15 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* 确保主页面的背景色正确 */
+body:not(.dark) {
+  background: linear-gradient(to bottom right, #dbeafe, #e0e7ff);
+}
+
+.dark {
+  background: linear-gradient(to bottom right, #1e293b, #1e1b4b);
 }
 
 @layer base {

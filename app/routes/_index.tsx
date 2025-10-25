@@ -28,7 +28,7 @@ export default function Index() {
                 JSON在线工具
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                格式化和验证JSON数据，支持语法高亮显示和错误提示，帮助您快速处理JSON格式
+                格式化和验证JSON数据，支持语法高亮和错误提示
               </p>
             </div>
           </Link>

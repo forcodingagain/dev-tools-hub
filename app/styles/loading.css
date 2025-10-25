@@ -1,0 +1,529 @@
+/**
+ * 加载状态和骨架屏样式
+ * 提供统一的加载动画和骨架屏效果
+ */
+
+/* ===== 基础骨架屏样式 ===== */
+.skeleton {
+  display: inline-block;
+  background-color: #e5e7eb;
+  border-radius: 0.375rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 骨架屏闪烁动画 */
+.skeleton-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    #e5e7eb 0%,
+    #f3f4f6 50%,
+    #e5e7eb 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* 骨架屏脉冲动画 */
+.skeleton-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 骨架屏波浪动画 */
+.skeleton-wave {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #f3f4f6 20%,
+    transparent 40%
+  );
+  background-size: 200% 100%;
+  animation: wave 2s infinite;
+}
+
+/* 骨架屏淡入淡出动画 */
+.skeleton-fade {
+  animation: fadeInOut 1.5s ease-in-out infinite alternate;
+}
+
+/* 动画速度变体 */
+.skeleton-slow {
+  animation-duration: 3s;
+}
+
+.skeleton-fast {
+  animation-duration: 1s;
+}
+
+/* ===== 加载指示器样式 ===== */
+.loading-spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-spinner-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 1.5px;
+}
+
+.loading-spinner-lg {
+  width: 2rem;
+  height: 2rem;
+  border-width: 3px;
+}
+
+/* 双环加载指示器 */
+.loading-spinner-double {
+  position: relative;
+}
+
+.loading-spinner-double::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #60a5fa;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-spinner-double::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-left: 2px solid #93c5fd;
+  border-radius: 50%;
+  animation: spin 1s linear infinite reverse;
+  animation-delay: 0.15s;
+}
+
+/* 点状加载指示器 */
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.loading-dots span {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  animation: dotPulse 1.4s ease-in-out infinite both;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0s;
+}
+
+/* 进度条样式 */
+.progress-bar {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  border-radius: 9999px;
+  transition: width 0.3s ease-out;
+  position: relative;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* 条纹进度条 */
+.progress-bar-striped .progress-bar-fill {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 1rem 1rem;
+  animation: progressStripes 1s linear infinite;
+}
+
+/* 加载遮罩 */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.loading-content {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  max-width: 20rem;
+  width: 90%;
+  text-align: center;
+}
+
+/* 按钮加载状态 */
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.btn-loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: inherit;
+  border-radius: inherit;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  color: white;
+}
+
+/* 表格加载状态 */
+.table-loading {
+  position: relative;
+}
+
+.table-loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-loading::after {
+  content: '';
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 11;
+}
+
+/* 卡片加载状态 */
+.card-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: cardShimmer 1.5s infinite;
+  z-index: 1;
+}
+
+/* 延迟加载占位符 */
+.lazy-load-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background-color: #f9fafb;
+  border: 2px dashed #e5e7eb;
+  border-radius: 0.5rem;
+  color: #6b7280;
+}
+
+.lazy-load-placeholder::before {
+  content: '⏳';
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.lazy-load-placeholder::after {
+  content: '加载中...';
+  font-size: 0.875rem;
+}
+
+/* 错误状态占位符 */
+.lazy-load-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background-color: #fef2f2;
+  border: 2px dashed #fecaca;
+  border-radius: 0.5rem;
+  color: #dc2626;
+  padding: 1rem;
+}
+
+.lazy-load-error::before {
+  content: '❌';
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.lazy-load-error::after {
+  content: '加载失败';
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* 智能预加载指示器 */
+.preload-indicator {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: #1f2937;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.3s ease;
+}
+
+.preload-indicator.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.preload-indicator::before {
+  content: '⚡ 预加载中';
+  margin-right: 0.5rem;
+}
+
+/* ===== 动画定义 ===== */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes wave {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes progressStripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 1rem 1rem;
+  }
+}
+
+@keyframes cardShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ===== 响应式设计 ===== */
+@media (max-width: 640px) {
+  .loading-content {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .preload-indicator {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+/* ===== 高对比度模式支持 ===== */
+@media (prefers-contrast: high) {
+  .skeleton {
+    background-color: #000000;
+  }
+
+  .skeleton-shimmer {
+    background-image: linear-gradient(
+      90deg,
+      #000000 0%,
+      #333333 50%,
+      #000000 100%
+    );
+  }
+
+  .loading-spinner {
+    border-color: #000000;
+    border-top-color: #ffffff;
+  }
+}
+
+/* ===== 减少动画模式支持 ===== */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer,
+  .skeleton-pulse,
+  .skeleton-wave,
+  .skeleton-fade,
+  .loading-spinner,
+  .loading-spinner-double::before,
+  .loading-spinner-double::after,
+  .loading-dots span,
+  .progress-bar-fill::after,
+  .btn-loading::after,
+  .table-loading::after,
+  .card-loading::before {
+    animation: none;
+  }
+
+  .progress-bar-fill {
+    transition: none;
+  }
+
+  .preload-indicator {
+    transition: none;
+  }
+}
+
+/* ===== 暗色主题支持 - 仅应用于明确的暗色模式类 ===== */
+.dark .skeleton {
+  background-color: #374151;
+}
+
+.dark .skeleton-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    #374151 0%,
+    #4b5563 50%,
+    #374151 100%
+  );
+}
+
+.dark .loading-spinner {
+  border-color: #4b5563;
+  border-top-color: #60a5fa;
+}
+
+.dark .progress-bar {
+  background-color: #4b5563;
+}
+
+.dark .lazy-load-placeholder {
+  background-color: #1f2937;
+  border-color: #374151;
+  color: #9ca3af;
+}
+
+.dark .lazy-load-error {
+  background-color: #450a0a;
+  border-color: #7f1d1d;
+  color: #f87171;
+}
+
+.dark .preload-indicator {
+  background-color: #111827;
+  color: #f3f4f6;
+}

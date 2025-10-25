@@ -46,7 +46,7 @@ export default function MermaidTool() {
               align-items: center;
               justify-content: center;
               min-height: 100vh;
-              background: transparent;
+              background: white;
               font-family: system-ui, sans-serif;
             }
             .svg-container {
@@ -55,12 +55,23 @@ export default function MermaidTool() {
               justify-content: center;
               width: 100%;
               height: 100%;
+              padding: 20px;
+              box-sizing: border-box;
             }
             svg {
               max-width: 100%;
               max-height: 100%;
               height: auto;
               width: auto;
+              display: block;
+              margin: 0 auto;
+            }
+            .mermaid {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+              height: 100%;
             }
           </style>
         </head>
@@ -73,11 +84,27 @@ export default function MermaidTool() {
     `
   }
 
-  // 初始化Mermaid
+  // 初始化Mermaid并加载默认示例
   useEffect(() => {
-    // 确保在客户端环境下才初始化
-    if (typeof window !== 'undefined') {
-      initMermaid()
+    // 确保在客户端环境下且DOM完全加载后才初始化
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      // 等待DOM完全加载
+      const timer = setTimeout(() => {
+        initMermaid().then(() => {
+          // 加载默认示例
+          const defaultExample = generateChartExample('flowchart')
+          setState(prev => ({ ...prev, input: defaultExample }))
+          setTimeout(() => renderChart(defaultExample), 1000) // 增加延迟确保Mermaid完全初始化
+        }).catch(error => {
+          console.error('Failed to initialize Mermaid:', error)
+          setState(prev => ({
+            ...prev,
+            error: 'Mermaid初始化失败，请刷新页面重试'
+          }))
+        })
+      }, 100) // 短暂延迟确保DOM准备就绪
+
+      return () => clearTimeout(timer)
     }
   }, [])
 
@@ -98,7 +125,12 @@ export default function MermaidTool() {
         },
         fontFamily: 'system-ui, sans-serif',
         fontSize: 14,
-        securityLevel: 'loose'
+        securityLevel: 'loose',
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+          curve: 'basis'
+        }
       })
     } catch (error) {
       console.error('Failed to initialize Mermaid:', error)
@@ -115,14 +147,38 @@ export default function MermaidTool() {
     [autoRender]
   )
 
+  // 创建安全的DOM容器
+  const createSafeContainer = useCallback(() => {
+    if (typeof document === 'undefined') return null
+
+    const container = document.createElement('div')
+    container.style.position = 'absolute'
+    container.style.left = '-9999px'
+    container.style.top = '-9999px'
+    container.style.width = '1px'
+    container.style.height = '1px'
+    container.style.overflow = 'hidden'
+    container.style.visibility = 'hidden'
+    document.body.appendChild(container)
+    return container
+  }, [])
+
   // 渲染图表
   const renderChart = useCallback(async (code: string) => {
+    // 检查客户端环境
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      setState(prev => ({
+        ...prev,
+        error: '请在浏览器环境中使用此功能'
+      }))
+      return
+    }
+
     setState(prev => ({ ...prev, rendering: true, error: undefined }))
 
-    try {
-      // 动态导入mermaid
-      const mermaid = (await import('mermaid')).default
+    let safeContainer = null
 
+    try {
       // 验证输入
       if (!code.trim()) {
         setState(prev => ({
@@ -134,11 +190,80 @@ export default function MermaidTool() {
         return
       }
 
+      // 等待DOM完全准备好
+      await new Promise<void>((resolve) => {
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => resolve(), { once: true })
+        } else {
+          resolve()
+        }
+      })
+
+      // 再次检查DOM环境
+      if (!document.body || !document.createElementNS) {
+        throw new Error('DOM环境不可用，请刷新页面重试')
+      }
+
+      // 创建安全的容器
+      safeContainer = createSafeContainer()
+      if (!safeContainer) {
+        throw new Error('无法创建渲染容器')
+      }
+
+      // 动态导入mermaid
+      const mermaidModule = await import('mermaid')
+      const mermaid = mermaidModule.default
+
+      // 应用主题配置 - 移除dom配置，让mermaid自己处理
+      const themeConfig = {
+        startOnLoad: false,
+        theme: state.options.theme || 'default',
+        themeVariables: {
+          primaryColor: '#3b82f6',
+          primaryTextColor: '#1f2937',
+          primaryBorderColor: '#e5e7eb',
+          lineColor: '#6b7280',
+          secondaryColor: '#10b981',
+          tertiaryColor: '#8b5cf6'
+        },
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontSize: 14,
+        securityLevel: 'loose',
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+          curve: 'basis'
+        },
+        themeCSS: `
+          .node rect, .node circle, .node ellipse, .node polygon {
+            fill: #3b82f6;
+            stroke: #1e40af;
+            stroke-width: 2px;
+          }
+          .edgePath .path {
+            stroke: #6b7280;
+            stroke-width: 2px;
+          }
+          .edgeLabel {
+            background-color: white;
+            color: #1f2937;
+          }
+        `
+      }
+
+      // 初始化Mermaid
+      mermaid.initialize(themeConfig)
+
       // 生成唯一ID
       const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-      // 渲染图表
-      const { svg } = await mermaid.render(id, code)
+      // 在安全容器中渲染图表
+      const { svg } = await mermaid.render(id, code, undefined, safeContainer)
+
+      // 验证SVG内容
+      if (!svg || !svg.includes('<svg')) {
+        throw new Error('生成的SVG内容无效')
+      }
 
       // 获取统计信息
       const stats = getMermaidStats(code)
@@ -152,15 +277,23 @@ export default function MermaidTool() {
         error: undefined
       }))
     } catch (error) {
+      console.error('Mermaid render error:', error)
+      const errorMessage = error instanceof Error ? error.message : '未知渲染错误'
+
       setState(prev => ({
         ...prev,
         rendering: false,
-        error: `Mermaid渲染错误: ${(error as Error).message}`,
-        validation: { valid: false, error: { message: (error as Error).message, type: 'render' } },
+        error: `Mermaid渲染错误: ${errorMessage}`,
+        validation: { valid: false, error: { message: errorMessage, type: 'render' } },
         output: ''
       }))
+    } finally {
+      // 清理安全容器
+      if (safeContainer && safeContainer.parentNode) {
+        safeContainer.parentNode.removeChild(safeContainer)
+      }
     }
-  }, [])
+  }, [state.options.theme, createSafeContainer])
 
   // 处理输入变化
   const handleInputChange = (value: string) => {
@@ -442,22 +575,24 @@ graph TD
                 {/* 图表显示区域 */}
                 <div
                   ref={svgRef}
-                  className="w-full h-96 border border-gray-300 rounded-lg bg-gray-50 overflow-auto p-4"
+                  className="w-full h-96 border border-gray-300 rounded-lg bg-white overflow-auto"
                 >
                   {state.output ? (
-                    <div className="w-full h-full flex items-center justify-center min-h-full">
+                    <div className="w-full h-full flex items-center justify-center p-8">
                       {/* 安全地渲染SVG - 使用iframe避免XSS */}
                       {state.output.includes('<svg') ? (
                         <iframe
                           srcDoc={generateCenteredHTML(state.output)}
-                          className="border-0 bg-transparent"
+                          className="border-0 bg-white"
                           sandbox="allow-same-origin"
                           title="Mermaid Chart"
                           style={{
                             width: '100%',
                             height: '100%',
                             maxWidth: '100%',
-                            maxHeight: '100%'
+                            maxHeight: '100%',
+                            border: 'none',
+                            borderRadius: '8px'
                           }}
                         />
                       ) : (
@@ -467,11 +602,17 @@ graph TD
                       )}
                     </div>
                   ) : (
-                    <div className="text-center text-gray-500">
-                      <svg className="w-16 h-16 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-500">
+                      <svg className="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       </svg>
-                      <p className="text-sm">渲染的图表将显示在这里</p>
+                      <p className="text-sm mb-4">正在初始化图表渲染器...</p>
+                      {state.rendering && (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                          <p className="text-sm">渲染中...</p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -503,14 +644,11 @@ graph TD
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-medium text-gray-800 mb-3">支持的图表类型</h4>
-                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                  <ul className="space-y-1 text-sm text-gray-600">
                     {Object.entries(CHART_TYPE_CONFIGS).map(([type, config]) => (
-                      <div key={type} className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span>{config.name}</span>
-                      </div>
+                      <li key={type}>• {config.name}</li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-800 mb-3">功能特性</h4>
@@ -519,9 +657,8 @@ graph TD
                     <li>• 多种主题样式</li>
                     <li>• SVG 导出功能</li>
                     <li>• 语法错误检测</li>
-                    <li>• 节点数量限制（200个）</li>
-                    <li>• 自动布局优化</li>
                     <li>• 复制到剪贴板</li>
+                    <li>• 自动布局优化</li>
                   </ul>
                 </div>
               </div>
