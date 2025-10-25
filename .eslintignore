@@ -1,0 +1,25 @@
+# Build outputs
+dist/
+build/
+public/build/
+
+# Dependencies
+node_modules/
+
+# Generated files
+*.min.js
+*.bundle.js
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+.cache/
+
+# Environment
+.env*
+
+# Logs
+*.log
