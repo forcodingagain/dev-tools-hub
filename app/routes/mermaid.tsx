@@ -32,6 +32,47 @@ export default function MermaidTool() {
   const [autoRender, setAutoRender] = useState(true)
   const svgRef = useRef<HTMLDivElement>(null)
 
+  // 生成居中的HTML内容
+  const generateCenteredHTML = (svgContent: string): string => {
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body {
+              margin: 0;
+              padding: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              min-height: 100vh;
+              background: transparent;
+              font-family: system-ui, sans-serif;
+            }
+            .svg-container {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+              height: 100%;
+            }
+            svg {
+              max-width: 100%;
+              max-height: 100%;
+              height: auto;
+              width: auto;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="svg-container">
+            ${svgContent}
+          </div>
+        </body>
+      </html>
+    `
+  }
+
   // 初始化Mermaid
   useEffect(() => {
     // 确保在客户端环境下才初始化
@@ -401,17 +442,23 @@ graph TD
                 {/* 图表显示区域 */}
                 <div
                   ref={svgRef}
-                  className="w-full h-96 border border-gray-300 rounded-lg bg-gray-50 overflow-auto flex items-center justify-center"
+                  className="w-full h-96 border border-gray-300 rounded-lg bg-gray-50 overflow-auto p-4"
                 >
                   {state.output ? (
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-full h-full flex items-center justify-center min-h-full">
                       {/* 安全地渲染SVG - 使用iframe避免XSS */}
                       {state.output.includes('<svg') ? (
                         <iframe
-                          srcDoc={state.output}
-                          className="w-full h-full border-0 bg-transparent"
+                          srcDoc={generateCenteredHTML(state.output)}
+                          className="border-0 bg-transparent"
                           sandbox="allow-same-origin"
                           title="Mermaid Chart"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            maxWidth: '100%',
+                            maxHeight: '100%'
+                          }}
                         />
                       ) : (
                         <div className="text-center text-gray-500">
